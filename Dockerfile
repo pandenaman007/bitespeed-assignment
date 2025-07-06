@@ -13,7 +13,8 @@ FROM eclipse-temurin:17
 WORKDIR /app
 
 # Copy the Spring Boot fat jar explicitly
-COPY --from=builder /app/build/libs/app.jar app.jar
+COPY --from=builder /app/build/libs/frontend-0.0.1-SNAPSHOT.jar app.jar
+
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
