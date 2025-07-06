@@ -5,15 +5,15 @@ WORKDIR /app
 # Copy everything to container
 COPY . .
 
-# Build the app (skip tests for faster build, optional)
-RUN gradle build -x test
+# Build the app (skip tests for faster build)
+RUN gradle bootJar -x test
 
 # -------- Stage 2: Run the app --------
 FROM eclipse-temurin:17
 WORKDIR /app
 
-# Copy the JAR from the builder stage
-COPY --from=builder /app/build/libs/*.jar app.jar
+# Copy the Spring Boot fat jar explicitly
+COPY --from=builder /app/build/libs/app.jar app.jar
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
