@@ -1,11 +1,19 @@
-# Use a lightweight JDK image
-FROM eclipse-temurin:17-jdk-alpine
-
-# Set the working directory
+# -------- Stage 1: Build the app --------
+FROM gradle:8.7-jdk17 AS builder
 WORKDIR /app
 
-# Copy the build output
-COPY build/libs/*.jar app.jar
+# Copy everything to container
+COPY . .
 
-# Run the JAR file
+# Build the app (skip tests for faster build, optional)
+RUN gradle build -x test
+
+# -------- Stage 2: Run the app --------
+FROM eclipse-temurin:17
+WORKDIR /app
+
+# Copy the JAR from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
